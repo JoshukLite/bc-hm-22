@@ -13,7 +13,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,13 +72,9 @@ public class CustomEntityManager {
     }
 
     private List<Field> getClassColumnFields(Class<?> cls) {
-        List<Field> columnNames = new ArrayList<>();
-        for (Field declaredField : cls.getDeclaredFields()) {
-            if (declaredField.isAnnotationPresent(Column.class) || declaredField.isAnnotationPresent(Id.class)) {
-                columnNames.add(declaredField);
-            }
-        }
-        return columnNames;
+        return Arrays.stream(cls.getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(Id.class))
+                .toList();
     }
 
     private Field findEntityIdField(List<Field> fields) {
